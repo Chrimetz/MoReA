@@ -1,0 +1,26 @@
+{
+    "Name": "XG Boost Regressor", 
+    "Details": "Predictive Model for power estimation of CNNs on GPGPUs", 
+    "Input_features": {
+        "INS": "True", 
+        "Frequenc": "True",
+        "CUDA Cores": "True", 
+        "RAM": "True",
+        "Base Frequency": "True",
+        "Boost Frequency": "True",
+        "Max Power": "True",
+        "Storage speed": "True",
+        "max Temp": "True",
+        "SMs": "True",
+        "GFLOPS": "True",
+        "Texture Units": "True",
+        "Memory Clock": "True",
+        "Memory Bandwidth": "True",
+        "ROPs": "True",
+        "L2 Cache": "True",
+        "Transistors": "True",
+        "Manufacturing Process": "True",
+        "Architecture": "True",
+        "TrainParams": "True"
+    } 
+}

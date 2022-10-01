@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from model_factory import model_factory
 import json
 from os import walk
+import numpy as np
 
 app = FastAPI()
 
@@ -12,14 +13,16 @@ def read_root():
 
 @app.get("/models/")
 def read_models():
-    f = []    
+    files = []    
     for (dirpath, dirnames, filenames) in walk("./Models/"):
-        f.extend([filenames])        
+        for file in filenames:
+            if "json" not in str(file):
+                files.extend([file])        
         break
 
     models = []
     i = 1
-    for file in filenames:
+    for file in files:
         models.append([file, "http://localhost:8000/model/"+str(i)])
         i = i + 1
     return models
@@ -27,17 +30,17 @@ def read_models():
 @app.get("/model/{model_id}")
 def read_model(model_id: int, data: Union[str, None] = None):
     facotry = model_factory()
-    model = facotry.get(model_id)
+    model, model_detail = facotry.get(model_id)
     json_input = json.loads(data)
 
-    #@Todo: Dynamisch nur die Attribute an die Modelle weitereichen die benötigt werden
-    #Beispielsweise durch abgleich in einer JSON-Datei mit der Beschreibung der einzelnen
-    #Modelle. Dadurch müsste zukünftig nur noch das Modell plus Beschreibungs JSON hinzugefügt werden
-    #anschließend kann das neue Modell direkt genutzt werde.
-    model_input = []
-    for (key, value) in json_input.items():        
-        model_input.append(value)
+    model_inputs = model_detail["Input_features"]
 
-    predition = model.predict([model_input])
+    model_input = []
+    for (key, value) in json_input.items():     
+        for (input_key, input_value) in model_inputs.items(): 
+            if key == input_key and input_value == "True":  
+                model_input.append(value)
+
+    predition = model.predict([np.array(model_input, dtype=float)])
     
     return {"prediction": str(predition)}
