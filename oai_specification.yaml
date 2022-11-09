@@ -1,0 +1,38 @@
+openapi: 3.0.3
+
+info:
+  title: Model Requests API
+  description: >
+    Using this API you can request ML-based models by
+    providing the necessary parameters. The API will send
+    the results as a response.
+    
+    Each model can be added by creating a config file, 
+    which describes the necessary parameters.
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    name: Marcel Franzen
+    email: mfranzen@uni-bremen.de
+  version: 1.0.0
+  
+servers:
+  - url: 'http://localhost:8000/'
+  
+paths:
+  /model:
+    post:
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/model'
+      responses:
+        '200':
+          description: ''
+
+components:
+  schemas:
+    model:
+      type: object
+        
