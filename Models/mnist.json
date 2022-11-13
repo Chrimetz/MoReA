@@ -1,0 +1,12 @@
+{
+    "name": "MNIST", 
+    "details": "Predictive Model for recognizing handwritten digits, based on the MNIST dataset.", 
+    "outputs": "Probability-distribution of 10-classes for the digits 0-9.",
+    "input_features": [
+        {
+            "name": "image",
+            "shape": [28, 28, 1],
+            "type": "float"
+        }
+    ]
+}

@@ -1,26 +1,113 @@
 {
-    "Name": "Decision Tree Regressor", 
-    "Details": "Predictive Model for power estimation of CNNs on GPGPUs", 
-    "Input_features": {
-        "INS": "True", 
-        "Frequenc": "True",
-        "CUDA Cores": "True", 
-        "RAM": "True",
-        "Base Frequency": "True",
-        "Boost Frequency": "True",
-        "Max Power": "True",
-        "Storage speed": "True",
-        "max Temp": "True",
-        "SMs": "True",
-        "GFLOPS": "True",
-        "Texture Units": "True",
-        "Memory Clock": "True",
-        "Memory Bandwidth": "True",
-        "ROPs": "True",
-        "L2 Cache": "True",
-        "Transistors": "True",
-        "Manufacturing Process": "True",
-        "Architecture": "True",
-        "TrainParams": "True"
-    } 
+    "name": "Decision Tree Regressor", 
+    "details": "Predictive Model for power estimation of CNNs on GPGPUs", 
+    "outputs": "TBA",
+    "input_features": [
+        {
+            "name": "input",
+            "type": "list",
+            "features": [
+                {
+                    "name": "INS",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "Frequenc",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "CUDA Cores",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "RAM",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "Base Frequency",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "Boost Frequency",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "Max Power",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "Storage speed",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "Max Temp",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "SMs",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "GFLOPS",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "Texture Units",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "Memory Clock",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "Memory Bandwidth",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "ROPs",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "L2 Cache",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "Transistors",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "Manufacturing Process",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "Architecture",
+                    "shape": [1],
+                    "type": "int"
+                },
+                {
+                    "name": "TrainParams",
+                    "shape": [1],
+                    "type": "int"
+                }
+            ]
+        }
+    ]
 }

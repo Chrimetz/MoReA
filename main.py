@@ -4,8 +4,14 @@ from model_factory import model_factory
 import json
 from os import walk
 import numpy as np
+import logging
 
 app = FastAPI()
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+logger.info("TEST")
 
 @app.get("/")
 def read_root():

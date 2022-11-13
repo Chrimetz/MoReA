@@ -29,7 +29,7 @@ paths:
               $ref: '#/components/schemas/model'
       responses:
         '200':
-          description: ''
+          description: 's'
 
 components:
   schemas:
