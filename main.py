@@ -1,6 +1,6 @@
 from typing import Union
 from fastapi import FastAPI
-from model_factory import model_factory
+from ml_models import model_factory
 import json
 from os import walk
 import numpy as np
