@@ -32,10 +32,14 @@ class ONNXModel(MLModel):
         return super().predict()
 
 class PickleModel(MLModel):
+    model = None
+
     def __init__(self, description, model_file_name):
         super().__init__(description, model_file_name)
 
     def load_model(self):
+        model = pickle.load(open(self.model_file_name, 'rb'))
+
         return super().load_model()
 
     def predict(self):
@@ -43,7 +47,7 @@ class PickleModel(MLModel):
 
 class MLModelFactory:
 
-    def get(self):
+    def get(self) -> MLModel:
         return ONNXModel('Test', 'models/mnist.onnx')
 
     def get_model(self, id: int):
