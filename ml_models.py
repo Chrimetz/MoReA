@@ -87,7 +87,7 @@ class MLModelFactory:
 
 	SUPPORTED_TYPES = ["onnx", "pickle"]
 
-	def get(self) -> IMLModel:
+	def get(self):
 		return ONNXModel('Test', 'models/mnist.onnx')
 
 	def validate_feature(self, feature, index):
