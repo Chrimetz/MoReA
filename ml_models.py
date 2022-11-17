@@ -4,7 +4,7 @@ different model types to do predictions.
 
 Classes:
 
-	MLModel
+	IMLModel
 	ONNXModel
 	PickleModel
 	MLModelFactory
@@ -17,8 +17,9 @@ from pathlib import Path
 
 import onnxruntime as rt
 
+from abc import ABCMeta, abstractmethod
 
-class MLModel:
+class IMLModel(metaclass=ABCMeta):
 	"""
 	A class to represent a base machine learning model.
 
@@ -37,12 +38,14 @@ class MLModel:
 		self.description = description
 		self.model_file_name = model_file_name
 
+	@abstractmethod
 	def load_model(self):
 		"""
 		Loads the model based on its type.
 		"""
 		raise NotImplementedError
 
+	@abstractmethod
 	def predict(self):
 		"""
 		Runs the prediction of the model.
@@ -50,7 +53,7 @@ class MLModel:
 		raise NotImplementedError
 
 
-class ONNXModel(MLModel):
+class ONNXModel(IMLModel):
 	sess = None
 
 	def __init__(self, description, model_file_name):
@@ -65,7 +68,7 @@ class ONNXModel(MLModel):
 		return super().predict()
 
 
-class PickleModel(MLModel):
+class PickleModel(IMLModel):
 	model = None
 
 	def __init__(self, description, model_file_name):
@@ -84,7 +87,7 @@ class MLModelFactory:
 
 	SUPPORTED_TYPES = ["onnx", "pickle"]
 
-	def get(self) -> MLModel:
+	def get(self) -> IMLModel:
 		return ONNXModel('Test', 'models/mnist.onnx')
 
 	def validate_feature(self, feature, index):
@@ -190,7 +193,7 @@ class MLModelFactory:
 					except Exception as e:
 						logger.error("Error while parsing " +
 									 file + ": " + str(e))
-						return False
+						continue
 				except:
 					logger.error(file + " is not a valid json file")
 
