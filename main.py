@@ -1,17 +1,20 @@
 from typing import Union
 from fastapi import FastAPI
-from ml_models import model_factory
+from ml_models import MLModelFactory
 import json
 from os import walk
+from os import path
 import numpy as np
 import logging
+
+import sys
 
 app = FastAPI()
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-logger.info("TEST")
+MLModelFactory().load_from_directory("./models", logger)
 
 @app.get("/")
 def read_root():

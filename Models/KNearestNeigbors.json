@@ -2,6 +2,7 @@
     "name": "K-Nearest Neighbors Regressor", 
     "details": "Predictive Model for power estimation of CNNs on GPGPUs", 
     "outputs": "TBA",
+    "type": "pickle",
     "input_features": [
         {
             "name": "input",
