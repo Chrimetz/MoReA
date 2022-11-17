@@ -38,6 +38,8 @@ class IMLModel(metaclass=ABCMeta):
 		self.description = description
 		self.model_file_name = model_file_name
 
+		self.load_model()
+
 	@abstractmethod
 	def load_model(self):
 		"""
@@ -54,30 +56,32 @@ class IMLModel(metaclass=ABCMeta):
 
 
 class ONNXModel(IMLModel):
-	sess = None
-
 	def __init__(self, description, model_file_name):
 		super().__init__(description, model_file_name)
 
 	def load_model(self):
-		sess = rt.InferenceSession(self.model_file_name)
+		try:
+			self.sess = rt.InferenceSession(self.model_file_name)
+		except:
+			raise SyntaxError("ONNX file is corrupt")
 
-		return super().load_model()
+		return True
 
 	def predict(self):
 		return super().predict()
 
 
 class PickleModel(IMLModel):
-	model = None
-
 	def __init__(self, description, model_file_name):
 		super().__init__(description, model_file_name)
 
 	def load_model(self):
-		model = pickle.load(open(self.model_file_name, 'rb'))
+		try:
+			self.model = pickle.load(open(self.model_file_name, 'rb'))
+		except:
+			raise SyntaxError("Pickle file is corrupt")
 
-		return super().load_model()
+		return True
 
 	def predict(self):
 		return super().predict()
@@ -86,9 +90,6 @@ class PickleModel(IMLModel):
 class MLModelFactory:
 
 	SUPPORTED_TYPES = ["onnx", "pickle"]
-
-	def get(self):
-		return ONNXModel('Test', 'models/mnist.onnx')
 
 	def validate_feature(self, feature, index):
 		if not "name" in feature:
