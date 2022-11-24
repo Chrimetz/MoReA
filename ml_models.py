@@ -16,22 +16,24 @@ import pickle
 from pathlib import Path
 
 import onnxruntime as rt
+import coremltools as ct
 
 from abc import ABCMeta, abstractmethod
+
 
 class IMLModel(metaclass=ABCMeta):
 	"""
 	A class to represent a base machine learning model.
 
 	Attributes:
-					description
-									JSON-file description of the model
-					model_file_name
-									The path of the machine learning model
+									description
+																	JSON-file description of the model
+									model_file_name
+																	The path of the machine learning model
 
 	Functions:
-					load_model
-					predict
+									load_model
+									predict
 	"""
 
 	def __init__(self, description, model_file_name):
@@ -54,6 +56,13 @@ class IMLModel(metaclass=ABCMeta):
 		"""
 		raise NotImplementedError
 
+	@abstractmethod
+	def get_type(self):
+		"""
+		Runs the prediction of the model.
+		"""
+		raise NotImplementedError
+
 
 class ONNXModel(IMLModel):
 	def __init__(self, description, model_file_name):
@@ -70,6 +79,9 @@ class ONNXModel(IMLModel):
 	def predict(self):
 		return super().predict()
 
+	def get_type(self):
+		return "ONNX"
+
 
 class PickleModel(IMLModel):
 	def __init__(self, description, model_file_name):
@@ -85,6 +97,28 @@ class PickleModel(IMLModel):
 
 	def predict(self):
 		return super().predict()
+
+	def get_type(self):
+		return "Pickle"
+
+
+class CoreMLModel(IMLModel):
+	def __init__(self, description, model_file_name):
+		super().__init__(description, model_file_name)
+
+	def load_model(self):
+		try:
+			self.model = ct.models.MLModel(self.model_file_name)
+		except:
+			raise SyntaxError("CoreMLModel file is corrupt")
+
+		return True
+
+	def predict(self):
+		return super().predict()
+
+	def get_type(self):
+		return "CoreMlModel"
 
 
 class MLModelFactory:
@@ -143,9 +177,9 @@ class MLModelFactory:
 		if not os.path.exists(path):
 			logger.error("Path " + path + "for ml models not found")
 
-			return []
+			return {}
 
-		loaded_models = []
+		loaded_models = {}
 
 		json_files = []
 		other_files = []
@@ -183,14 +217,11 @@ class MLModelFactory:
 						self.validate_description(parsed_description)
 
 						if parsed_description["type"].lower() == "onnx":
-							loaded_models.append(
-								ONNXModel(parsed_description, model_file_path)
-							)
+							loaded_models[model_filename] = ONNXModel(parsed_description,
+																	  model_file_path)
 						if parsed_description["type"].lower() == "pickle":
-							loaded_models.append(
-								PickleModel(parsed_description,
-											model_file_path)
-							)
+							loaded_models[model_filename] = PickleModel(parsed_description,
+																		model_file_path)
 					except Exception as e:
 						logger.error("Error while parsing " +
 									 file + ": " + str(e))
@@ -198,9 +229,9 @@ class MLModelFactory:
 				except:
 					logger.error(file + " is not a valid json file")
 
-		for model in loaded_models:
+		for name, model in loaded_models.items():
 			logger.info(
-				"Loaded " + model.description['name'] + " (Type: " 
+				"Loaded " + model.description['name'] + " (Type: "
 				+ model.description['type'] + ")")
 
 		return loaded_models
