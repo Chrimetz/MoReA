@@ -37,6 +37,7 @@ class IMLModel(metaclass=ABCMeta):
 	"""
 
 	def __init__(self, description, model_file_name):
+		self.name = description["name"]
 		self.description = description
 		self.model_file_name = model_file_name
 
@@ -62,6 +63,9 @@ class IMLModel(metaclass=ABCMeta):
 		Runs the prediction of the model.
 		"""
 		raise NotImplementedError
+
+	def get_name(self):
+		return self.name
 
 
 class ONNXModel(IMLModel):
@@ -171,6 +175,10 @@ class MLModelFactory:
 			except Exception as e:
 				raise e
 
+	def camelCase(self, st):
+		output = ''.join(x for x in st.title() if x.isalnum())
+		return output[0:]
+
 	def load_from_directory(self, path, logger):
 		logger.info("Loading ml models from " + path)
 
@@ -216,12 +224,23 @@ class MLModelFactory:
 					try:
 						self.validate_description(parsed_description)
 
-						if parsed_description["type"].lower() == "onnx":
-							loaded_models[model_filename] = ONNXModel(parsed_description,
-																	  model_file_path)
-						if parsed_description["type"].lower() == "pickle":
-							loaded_models[model_filename] = PickleModel(parsed_description,
+						model_endpoint_name = parsed_description["name"]
+						model_endpoint_name = model_endpoint_name.strip()
+						model_endpoint_name = self.camelCase(model_endpoint_name)
+
+						if not model_endpoint_name in loaded_models:
+							if parsed_description["type"].lower() == "onnx":
+								loaded_models[model_endpoint_name] = ONNXModel(parsed_description,
 																		model_file_path)
+							if parsed_description["type"].lower() == "pickle":
+								loaded_models[model_endpoint_name] = PickleModel(parsed_description,
+																			model_file_path)
+						else:
+							logger.error("Error while parsing " +
+									 file + ": " + "name already exists " + 
+									 model_endpoint_name)
+							continue
+						
 					except Exception as e:
 						logger.error("Error while parsing " +
 									 file + ": " + str(e))
@@ -231,7 +250,7 @@ class MLModelFactory:
 
 		for name, model in loaded_models.items():
 			logger.info(
-				"Loaded " + model.description['name'] + " (Type: "
+				"Loaded " + name + " (Type: "
 				+ model.description['type'] + ")")
 
 		return loaded_models
