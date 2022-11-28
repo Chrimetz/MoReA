@@ -1,5 +1,5 @@
 from typing import Union
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from ml_models import MLModelFactory, IMLModel
 import json
 from os import walk
@@ -37,4 +37,17 @@ def get_all_models(request: Request):
 
 @app.get("/models/{model_name}")
 def get_model(model_name: str):
-	return model_name
+	if model_name not in models:
+		raise HTTPException(status_code=404, detail="Model not found") 
+
+	model = models[model_name]
+
+	result = {
+		"name": model.name,
+		"details": model.description["details"],
+		"outputs": model.description["outputs"],
+		"type": model.description["type"],
+		"input_features": model.get_input_features()
+	}
+
+	return result

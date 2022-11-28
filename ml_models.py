@@ -64,8 +64,21 @@ class IMLModel(metaclass=ABCMeta):
 		"""
 		raise NotImplementedError
 
-	def get_name(self):
-		return self.name
+	def extract_features(self, features):
+		result = []
+
+		for i in features:
+			if i["type"] != "list":
+				result.append(i)
+			else:
+				result = result + self.extract_features(i["features"])
+
+		return result
+
+	def get_input_features(self):
+		temp = self.extract_features(self.description["input_features"])
+
+		return temp
 
 
 class ONNXModel(IMLModel):
@@ -150,6 +163,10 @@ class MLModelFactory:
 			if not "features" in feature:
 				raise KeyError(
 					"Features not found in input feature " + str(index))
+
+			if type(feature["features"]) != list:
+				raise KeyError(
+					"Features in input feature " + str(index) + " is not a list")
 
 			j = -1
 			for f in feature["features"]:
