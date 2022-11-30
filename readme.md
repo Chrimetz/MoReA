@@ -11,7 +11,7 @@ uvicorn main:app --reload
 
 ## API Endpoints
 
-# All Models
+### All Models
 
 The first endpoint provides a list of all available ML-based models along with its description and an individual URL to access each model
 
@@ -32,7 +32,7 @@ Example result:
   }
 ]`
 
-# Model details
+### Model details
 
 Each model provides an individual endpoint for the details of the model including the possible parameters.
 
