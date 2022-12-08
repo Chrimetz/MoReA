@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Dict, Optional
 from fastapi import FastAPI, Request, HTTPException
 from ml_models import MLModelFactory, IMLModel
 import json
@@ -9,6 +9,8 @@ import logging
 
 import sys
 
+from pydantic import BaseModel
+
 app = FastAPI()
 
 logging.basicConfig(level=logging.DEBUG)
@@ -16,6 +18,8 @@ logger = logging.getLogger(__name__)
 
 models = MLModelFactory().load_from_directory("./models", logger)
 
+class ModelInput(BaseModel):
+    features: Dict[str, Union[str, list, float, int]]
 
 @app.get("/")
 def read_root():
@@ -51,3 +55,47 @@ def get_model(model_name: str):
 	}
 
 	return result
+
+@app.post("/models/{model_name}")
+def request_model(model_name: str, input: ModelInput):
+	if model_name not in models:
+		raise HTTPException(status_code=404, detail="Model not found") 
+
+	model = models[model_name]
+	features = input.features
+
+	for f in model.get_input_features():
+		if not f["name"] in features.keys():
+			raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "' not found")
+		else:
+			pf = features[f["name"]]
+			if f["shape"] == [1]:
+				try:
+					if f["type"].lower() == "int":
+						value = np.array([int(pf)])
+					elif f["type"].lower() == "float":
+						value = np.array([float(pf)])
+					elif f["type"].lower() == "string" or f["type"].lower() == "str":
+						value = np.array([str(pf)])
+				except ValueError:
+					raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "' not parseable as type '" + f["type"] + "'") 
+				except TypeError:
+					raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "' not parseable as type '" + f["type"] + "'") 
+			else:
+				try:
+					if f["type"].lower() == "int":
+						value = np.asarray(pf, dtype=int)
+					elif f["type"].lower() == "float":
+						value = np.asarray(pf, dtype=float)
+					elif f["type"].lower() == "string" or f["type"].lower() == "str":
+						value = np.asarray(pf, dtype=str)
+				except ValueError as e:
+					raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "': " + str(e))
+		
+			shape = []
+			for i in range(0, len(value.shape)):
+				shape.append(value.shape[i])
+			
+			if shape != f["shape"]:
+				raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "': Shape [" + ','.join(str(e) for e in shape) + "] not matching [" + ','.join(str(e) for e in f["shape"]) + "]")
+	return input
