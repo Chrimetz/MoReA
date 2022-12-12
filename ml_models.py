@@ -20,6 +20,7 @@ import coremltools as ct
 
 from abc import ABCMeta, abstractmethod
 
+import numpy as np
 
 class IMLModel(metaclass=ABCMeta):
 	"""
@@ -93,8 +94,13 @@ class ONNXModel(IMLModel):
 
 		return True
 
-	def predict(self):
-		return super().predict()
+	def predict(self, processed_features):
+		input_name = self.sess.get_inputs()[0].name
+		label_name = self.sess.get_outputs()[0].name
+		
+		pred_onx = self.sess.run([label_name], processed_features)[0]
+
+		return {label_name: pred_onx.tolist()}
 
 	def get_type(self):
 		return "ONNX"

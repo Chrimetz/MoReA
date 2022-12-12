@@ -6,8 +6,8 @@
     "input_features": [
         {
             "name": "image",
-            "shape": [28, 28, 1],
-            "type": "int"
+            "shape": [1, 28, 28, 1],
+            "type": "float32"
         }
     ]
 }

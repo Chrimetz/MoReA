@@ -64,6 +64,8 @@ def request_model(model_name: str, input: ModelInput):
 	model = models[model_name]
 	features = input.features
 
+	processed_features = {}
+
 	for f in model.get_input_features():
 		if not f["name"] in features.keys():
 			raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "' not found")
@@ -75,6 +77,8 @@ def request_model(model_name: str, input: ModelInput):
 						value = np.array([int(pf)])
 					elif f["type"].lower() == "float":
 						value = np.array([float(pf)])
+					elif f["type"].lower() == "float32":
+						value = np.array([float(pf)], dtype=np.float32)
 					elif f["type"].lower() == "string" or f["type"].lower() == "str":
 						value = np.array([str(pf)])
 				except ValueError:
@@ -84,11 +88,13 @@ def request_model(model_name: str, input: ModelInput):
 			else:
 				try:
 					if f["type"].lower() == "int":
-						value = np.asarray(pf, dtype=int)
+						value = np.array(pf, dtype=int)
 					elif f["type"].lower() == "float":
-						value = np.asarray(pf, dtype=float)
+						value = np.array(pf, dtype=float)
+					elif f["type"].lower() == "float32":
+						value = np.array(pf, dtype=np.float32)
 					elif f["type"].lower() == "string" or f["type"].lower() == "str":
-						value = np.asarray(pf, dtype=str)
+						value = np.array(pf, dtype=str)
 				except ValueError as e:
 					raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "': " + str(e))
 		
@@ -98,4 +104,7 @@ def request_model(model_name: str, input: ModelInput):
 			
 			if shape != f["shape"]:
 				raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "': Shape [" + ','.join(str(e) for e in shape) + "] not matching [" + ','.join(str(e) for e in f["shape"]) + "]")
-	return input
+
+			processed_features[f["name"]] = value
+
+	return model.predict(processed_features)
