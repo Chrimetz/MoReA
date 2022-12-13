@@ -1,0 +1,13 @@
+{
+    "name": "Boston house prices", 
+    "details": "Predictive Model for house prices in Boston", 
+    "outputs": "The price and the ptratio.",
+    "type": "onnx",
+    "input_features": [
+        {
+            "name": "input_1",
+            "shape": [1, 12],
+            "type": "float32"
+        }
+    ]
+}

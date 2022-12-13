@@ -95,12 +95,13 @@ class ONNXModel(IMLModel):
 		return True
 
 	def predict(self, processed_features):
-		input_name = self.sess.get_inputs()[0].name
-		label_name = self.sess.get_outputs()[0].name
-		
-		pred_onx = self.sess.run([label_name], processed_features)[0]
+		pred_onx = self.sess.run(output_names=[o.name for o in self.sess.get_outputs()], input_feed=processed_features)
 
-		return {label_name: pred_onx.tolist()}
+		result = {}
+		for i in range(len(pred_onx)):
+			result[self.sess.get_outputs()[i].name] = pred_onx[i].tolist()
+
+		return {'result': result}
 
 	def get_type(self):
 		return "ONNX"
