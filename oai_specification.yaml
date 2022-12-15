@@ -1,38 +1,229 @@
-openapi: 3.0.3
-
+openapi: 3.0.2
 info:
-  title: Model Requests API
-  description: >
+  title: MoreaPI
+  description: |-
     Using this API you can request ML-based models by
-    providing the necessary parameters. The API will send
-    the results as a response.
-    
-    Each model can be added by creating a config file, 
-    which describes the necessary parameters.
+        providing the necessary parameters. The API will send
+        the results as a response. Each model can be added by creating a config file, 
+        which describes the necessary parameters.
   termsOfService: "http://swagger.io/terms/"
   contact:
     name: Marcel Franzen
     email: mfranzen@uni-bremen.de
   version: 1.0.0
-  
-servers:
-  - url: 'http://localhost:8000/'
-  
 paths:
-  /model:
-    post:
-      requestBody:
-        required: true
-        content: 
-          application/json:
-            schema:
-              $ref: '#/components/schemas/model'
+  /models/:
+    get:
+      summary: Get all available models
+      operationId: get_all_models_models__get
       responses:
         '200':
-          description: 's'
-
+          description: A list of all available models with a description and their endpoint url
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ModelsList'
+              example:
+                - name: MNIST
+                  endpoint: http://localhost:8000/models/Mnist
+                  description: Predictive Model for recognizing handwritten digits, based on the MNIST dataset.
+                - name: XG Boost Regressor
+                  endpoint: http://localhost:8000/models/XgBoostRegressor
+                  description: Predictive Model for power estimation of CNNs on GPGPUs
+  /models/{model_name}:
+    get:
+      summary: Get Model
+      operationId: get_model_models__model_name__get
+      parameters:
+        - required: true
+          schema:
+            title: Model Name
+            type: string
+          name: model_name
+          in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelComplex'
+              example:
+                name: MNIST
+                details: Predictive Model for recognizing handwritten digits, based on the MNIST dataset.
+                outputs: Probability-distribution of 10-classes for the digits 0-9.
+                type: onnx
+                input_features:
+                  - name: image
+                    shape:
+                      - 1
+                      - 28
+                      - 28
+                      - 1
+                    type: float32
+        '404':
+          description: Model not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+              example:
+                detail: Not Found
+    post:
+      summary: Request model for inferencing
+      operationId: request_model_models__model_name__post
+      parameters:
+        - required: true
+          schema:
+            title: Model Name
+            type: string
+          name: model_name
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelInput'
+            example:
+              features:
+                input_1:
+                  - - -0.39592582
+                    - 0.85374287
+                    - -1.30031899
+                    - -0.29541676
+                    - -0.68858289
+                    - 0.82781921
+                    - 0.07100048
+                    - -0.31650001
+                    - -0.30917602
+                    - -1.08348329
+                    - 0.42300873
+                    - -0.71757293
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/InferencingResult'
+              example:
+                result:
+                  price_output:
+                    - - 31.021991729736328
+                  ptratio_output:
+                    - - 15.65169620513916
+        '400':
+          description: Feature not found or not parseable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+              examples:
+                feature_not_found:
+                  value:
+                    detail: Feature 'input_1' not found
+                feature_not_paresable:
+                  value:
+                    detail: 'Feature ''input_1'': could not convert string to float: ''test'''
+        '404':
+          description: Model not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomError'
+              example:
+                detail: Not Found
 components:
   schemas:
-    model:
+    InferencingResult:
+      title: Result of a model prediction
       type: object
+      properties:
+        result:
+          title: Result of the model prediction
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+  
+    ModelsList:
+      title: List of models
+      type: array
+      items:
+        $ref: '#/components/schemas/ModelSimple'
         
+    ModelSimple:
+      title: Simple model
+      type: object
+      properties:
+        name:
+          title: Name of the model
+          type: string
+        endpoint:
+          title: Url of the model
+          type: string
+        description:
+          title: Description of the model
+          type: string
+    
+    ModelComplex:
+      title: Complex model
+      type: object
+      properties:
+        name:
+          title: Name of the model
+          type: string
+        details:
+          title: Description of the model
+          type: string
+        outputs:
+          title: Description of the model output
+          type: string
+        input_features:
+            title: List of the required input features
+            type: array
+            items:
+              $ref: '#/components/schemas/InputFeature'
+              
+    InputFeature:
+      title: Input feature of a model
+      type: object
+      properties:
+        name: 
+          title: Name of the input feature
+          type: string
+        shape:
+          title: List defining the input shape (dimensions)
+          type: array
+          items: 
+            type: integer
+        type:
+          title: The data type of the input (e.g. string, int, float32...)
+          type: string
+          
+    CustomError:
+      title: Custom error
+      type: object
+      properties:
+        detail:
+          title: Detail
+          type: string
+
+    ModelInput:
+      title: Input of a model
+      required:
+        - features
+      type: object
+      properties:
+        features:
+          title: Features
+          type: object
+          additionalProperties:
+            anyOf:
+              - type: string
+              - type: array
+                items: {}
+              - type: number
+              - type: integer

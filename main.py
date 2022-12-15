@@ -21,11 +21,6 @@ models = MLModelFactory().load_from_directory("./models", logger)
 class ModelInput(BaseModel):
     features: Dict[str, Union[str, list, float, int]]
 
-@app.get("/")
-def read_root():
-	return {"Hello": "World"}
-
-
 @app.get("/models/")
 def get_all_models(request: Request):
 	result = []
@@ -68,7 +63,7 @@ def request_model(model_name: str, input: ModelInput):
 
 	for f in model.get_input_features(True):
 		if not f["name"] in features.keys():
-			raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "' not found")
+			raise HTTPException(status_code=400, detail="Feature '" + f["name"] + "' not found")
 		else:
 			pf = features[f["name"]]
 			if f["shape"] == [1]:
@@ -82,9 +77,9 @@ def request_model(model_name: str, input: ModelInput):
 					elif f["type"].lower() == "string" or f["type"].lower() == "str":
 						value = np.array([str(pf)])
 				except ValueError:
-					raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "' not parseable as type '" + f["type"] + "'") 
+					raise HTTPException(status_code=400, detail="Feature '" + f["name"] + "' not parseable as type '" + f["type"] + "'") 
 				except TypeError:
-					raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "' not parseable as type '" + f["type"] + "'") 
+					raise HTTPException(status_code=400, detail="Feature '" + f["name"] + "' not parseable as type '" + f["type"] + "'") 
 			else:
 				try:
 					if f["type"].lower() == "int":
@@ -96,14 +91,14 @@ def request_model(model_name: str, input: ModelInput):
 					elif f["type"].lower() == "string" or f["type"].lower() == "str":
 						value = np.array(pf, dtype=str)
 				except ValueError as e:
-					raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "': " + str(e))
+					raise HTTPException(status_code=400, detail="Feature '" + f["name"] + "': " + str(e))
 		
 			shape = []
 			for i in range(0, len(value.shape)):
 				shape.append(value.shape[i])
 			
 			if shape != f["shape"]:
-				raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "': Shape [" + ','.join(str(e) for e in shape) + "] not matching [" + ','.join(str(e) for e in f["shape"]) + "]")
+				raise HTTPException(status_code=400, detail="Feature '" + f["name"] + "': Shape [" + ','.join(str(e) for e in shape) + "] not matching [" + ','.join(str(e) for e in f["shape"]) + "]")
 
 			processed_features[f["name"]] = value
 
@@ -122,4 +117,4 @@ def request_model(model_name: str, input: ModelInput):
 
 		return prediction
 	except Exception as e:
-		raise HTTPException(status_code=404, detail="Prediction failed: " + str(e))
+		raise HTTPException(status_code=400, detail="Prediction failed: " + str(e))
