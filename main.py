@@ -66,7 +66,7 @@ def request_model(model_name: str, input: ModelInput):
 
 	processed_features = {}
 
-	for f in model.get_input_features():
+	for f in model.get_input_features(True):
 		if not f["name"] in features.keys():
 			raise HTTPException(status_code=404, detail="Feature '" + f["name"] + "' not found")
 		else:
@@ -107,4 +107,19 @@ def request_model(model_name: str, input: ModelInput):
 
 			processed_features[f["name"]] = value
 
-	return model.predict(processed_features)
+	final_features = {}
+	for f in model.get_input_features(False):
+		if f["type"].lower() != "list":
+			final_features[f["name"]] = processed_features[f["name"]]
+		else:
+			l = []
+			for x in [y["name"] for y in f["features"]]:
+				l.append({x: processed_features[x]})
+			final_features[f["name"]] = l
+			
+	try:
+		prediction = model.predict(final_features)
+
+		return prediction
+	except Exception as e:
+		raise HTTPException(status_code=404, detail="Prediction failed: " + str(e))

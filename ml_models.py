@@ -65,21 +65,22 @@ class IMLModel(metaclass=ABCMeta):
 		"""
 		raise NotImplementedError
 
-	def extract_features(self, features):
+	def extract_features_flat(self, features):
 		result = []
 
 		for i in features:
 			if i["type"] != "list":
 				result.append(i)
 			else:
-				result = result + self.extract_features(i["features"])
+				result = result + self.extract_features_flat(i["features"])
 
 		return result
 
-	def get_input_features(self):
-		temp = self.extract_features(self.description["input_features"])
-
-		return temp
+	def get_input_features(self, flat = False):
+		if flat:
+			return self.extract_features_flat(self.description["input_features"])
+		else:
+			return self.description["input_features"]
 
 
 class ONNXModel(IMLModel):
@@ -119,8 +120,13 @@ class PickleModel(IMLModel):
 
 		return True
 
-	def predict(self):
-		return super().predict()
+	def predict(self, processed_features):
+		model_input = np.asarray([list(x.values())[0][0] for x in processed_features["input"]])
+		model_input = np.expand_dims(model_input, axis=0)
+		
+		prediction = self.model.predict(model_input.tolist())[0]
+		
+		return {'result': {'output': [x for x in prediction]}}
 
 	def get_type(self):
 		return "Pickle"
