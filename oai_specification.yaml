@@ -11,6 +11,10 @@ info:
     name: Marcel Franzen
     email: mfranzen@uni-bremen.de
   version: 1.0.0
+  
+servers:
+  - url: https://localhost:8000
+  
 paths:
   /models/:
     get:
