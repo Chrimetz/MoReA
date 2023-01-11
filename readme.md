@@ -7,9 +7,16 @@ Additional ML-based Models can easily extend the API by adding the Models to the
 As mentioned, the project is in a work-in-progress state; thus, only sklearn models saved with pickels and .onnx models are supported currently. The model and the description file must have identical names, except for the ending. 
 
 ## Starting the API:
+### Console
 uvicorn main:app --reload
 
 A list of required python packages can be found in "requirements.txt".
+
+### Docker
+A docker file is available.
+
+Build: docker build --tag moreapi-docker .
+Run: docker run --publish 8000:8000 moreapi-docker
 
 ## API Endpoints
 
