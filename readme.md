@@ -8,7 +8,8 @@ As mentioned, the project is in a work-in-progress state; thus, only sklearn mod
 
 ## Starting the API:
 ### Console 
-Run the following command from the root path of this repository: 
+Run the following command from the root path of this repository:
+
 uvicorn app.main:app --reload
 
 A list of required python packages can be found in "requirements.txt".
@@ -16,13 +17,13 @@ A list of required python packages can be found in "requirements.txt".
 ### Docker
 A docker file is available.
 
-Build: docker build --tag moreapi-docker .
+Build: docker build --tag moreapi-docker .\
 Run: docker run --publish 8000:8000 moreapi-docker
 
 #### Custom model dir
 A few basic models are currently copied into the docker image.
-If you want to use your own models after the docker image is built, you can mount a volume:
-
+If you want to use your own models after the docker image is built, you can mount a volume:\
+\
 docker run --publish 8000:8000 --volume /path/to/own/models/directory:/app/app/models moreapi-docker
 
 ## API Endpoints
