@@ -4,4 +4,4 @@ fastapi
 onnxruntime
 pydantic
 coremltools
-scikit-learn
+scikit-learn==1.1.0
