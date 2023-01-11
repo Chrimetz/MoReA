@@ -9,6 +9,8 @@ As mentioned, the project is in a work-in-progress state; thus, only sklearn mod
 ## Starting the API:
 uvicorn main:app --reload
 
+A list of required python packages can be found in "requirements.txt".
+
 ## API Endpoints
 
 ### All Models
