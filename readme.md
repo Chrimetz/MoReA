@@ -18,6 +18,12 @@ A docker file is available.
 Build: docker build --tag moreapi-docker .
 Run: docker run --publish 8000:8000 moreapi-docker
 
+#### Custom model dir
+A few basic models are currently copied into the docker image.
+If you want to use your own models after the docker image is built, you can mount a volume:
+
+docker run --publish 8000:8000 --volume /path/to/own/models/directory:/app/models moreapi-docker
+
 ## API Endpoints
 
 ### All Models
