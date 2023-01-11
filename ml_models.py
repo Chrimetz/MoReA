@@ -115,8 +115,8 @@ class PickleModel(IMLModel):
 	def load_model(self):
 		try:
 			self.model = pickle.load(open(self.model_file_name, 'rb'))
-		except:
-			raise SyntaxError("Pickle file is corrupt")
+		except Exception as e:
+			raise SyntaxError("Pickle file is corrupt - " + str(e))
 
 		return True
 

@@ -1,0 +1,7 @@
+uvicorn
+numpy
+fastapi
+onnxruntime
+pydantic
+coremltools
+scikit-learn
