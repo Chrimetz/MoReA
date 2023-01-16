@@ -6,6 +6,10 @@ Additional ML-based Models can easily extend the API by adding the Models to the
 
 As mentioned, the project is in a work-in-progress state; thus, only sklearn models saved with pickels and .onnx models are supported currently. The model and the description file must have identical names, except for the ending. 
 
+## Public running api:
+
+http://moreapi.dsc.uni-bremen.de:8000
+
 ## Starting the API:
 ### Console 
 Run the following command from the root path of this repository:
