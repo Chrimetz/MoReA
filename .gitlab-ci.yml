@@ -8,6 +8,7 @@
 pages:
   stage: deploy
   environment: production
+  script:    
   artifacts:
     paths:
       - public
