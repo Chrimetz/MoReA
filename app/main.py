@@ -1,3 +1,21 @@
+"""Main
+
+This is the main class of MoreaPI. It loads all models, starts the REST API
+and provides the endpoints.
+
+Attributes:
+	app (FastAPI): REST API
+	logger (Logger): Logger of FastAPI
+	dir_path (str): Current working directory
+	models (list): List of all available models in dir_path/models
+
+Functions:
+	get_all_models: Returns a list of all available models
+	get_model: Returns details of a specific model based on its name
+	request_model: Runs the inferencing of a model based on its name and input features
+
+"""
+
 from typing import Union, Dict, Optional
 from fastapi import FastAPI, Request, HTTPException
 from .ml_models import MLModelFactory, IMLModel
@@ -25,6 +43,15 @@ class ModelInput(BaseModel):
 
 @app.get("/models/")
 def get_all_models(request: Request):
+	"""Get a list of all available models with their endpoint url
+
+	Args:
+	    request (Request): HTTP-GET request
+		
+	Returns:
+		list: A list of all available models with name, endpoint and description
+
+	"""
 	result = []
 
 	for name, model in models.items():
@@ -38,6 +65,15 @@ def get_all_models(request: Request):
 
 @app.get("/models/{model_name}")
 def get_model(model_name: str):
+	"""Get details of a specific model
+
+	Args:
+	    model_name (str): A unique name to identify the requested model
+		
+	Returns:
+		dict: A dict of the model details and the input features
+
+	"""
 	if model_name not in models:
 		raise HTTPException(status_code=404, detail="Model not found") 
 
@@ -55,6 +91,16 @@ def get_model(model_name: str):
 
 @app.post("/models/{model_name}")
 def request_model(model_name: str, input: ModelInput):
+	"""Run the inferencing of a model based on input features
+
+	Args:
+	    model_name (str): A unique name to identify the requested model
+		input (ModelInput): The input features for the inferencing
+
+	Returns:
+		dict: A dict of the model inferencing results
+
+	"""
 	if model_name not in models:
 		raise HTTPException(status_code=404, detail="Model not found") 
 
