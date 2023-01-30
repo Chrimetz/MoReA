@@ -1,0 +1,59 @@
+{
+    "$id": "https://example.com/person.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Model",
+    "type": "object",
+    "properties": {
+        "modelName": {
+            "type": "string",
+            "description": "Name of the model" 
+        },
+        "details":{
+            "type": "string",
+            "description": "Description of the model" 
+        },
+        "outputs":{ 
+            "type": "string",    
+            "description": "Description Output of the model"
+        },
+        "modelType":{ 
+            "type": "string",            
+            "description": "Model type (pickle | onnx)"
+        },
+        "inputFeatures":{
+            "type":"object",
+            "description":"Array of Input Features for the ML-Model",
+            "minItems": 1,
+            "uniqueItems": true,
+            "properties":{
+                "name":{
+                    "type":"array",
+                    "describtion":"Input feature names",
+                    "minItems":1,
+                    "uniqueItems":true
+                },
+                "shape":{
+                    "type":"object",
+                    "describtion":"Shape of the input features",
+                    "properties":{
+                        "length":{
+                            "type":"integer"
+                        },
+                        "width":{
+                            "type":"integer"
+                        },
+                        "height":{
+                            "type":"integer"
+                        }
+                    },
+                    "required":["length", "width", "height"]
+                },
+                "itemsType":{
+                    "type":"string",
+                    "describtion":"Input feature type"
+                }
+            }
+        }
+    },
+    "required": ["modelName", "outputs", "modelType", "inputFeatures"]    
+}
