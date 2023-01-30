@@ -17,8 +17,11 @@
             "description": "Description Output of the model"
         },
         "modelType":{ 
-            "type": "string",            
-            "description": "Model type (pickle | onnx)"
+            "oneOf":[
+                {"type": "string"},
+                {"enum":["pickle", "onnx"]}
+            ],
+            "description": "Model type (pickle | onnx)"            
         },
         "inputFeatures":{
             "type":"object",
