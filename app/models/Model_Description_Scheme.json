@@ -1,87 +1,130 @@
 {
-    "$id": "https://example.com/person.schema.json",
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "title": "Model",
-    "type": "object",
-    "properties": {
-      "modelName": {
-        "type": "string",
-        "description": "Name of the model"
-      },
-      "details": {
-        "type": "string",
-        "description": "Description of the model"
-      },
-      "outputs": {
-        "type": "string",
-        "description": "Description Output of the model"
-      },
-      "modelType": {
-        "oneOf": [
-          {
-            "type": "string"
-          },
-          {
-            "enum": [
-              "pickle",
-              "onnx"
-            ]
-          }
-        ],
-        "description": "Model type (pickle | onnx)"
-      },
-      "inputFeatures": {
-        "type": "object",
-        "description": "Array of Input Features for the ML-Model",
-        "properties": {
-          "features": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "itemName": {
-                  "type": "string"
-                },
-                "itemType": {
-                  "type": "string"
-                },
-                "itemDescription": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "itemName",
-                "itemType",
-                "itemDescription"
-              ]
-            },
-            "describtion": "Input feature names",
-            "minItems": 1,
-            "uniqueItems": true
-          }
-        },
-        "shape": {
+  "$id": "https://example.com/person.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Model",
+  "type": "object",
+  "properties": {
+    "modelName": {
+      "type": "string",
+      "description": "Name of the model"
+    },
+    "details": {
+      "type": "string",
+      "description": "Description of the model"
+    },
+    "outputs": {
+      "type": "object",
+      "description": "Array of output values of the ML-Model",
+      "properties": {
+        "outputValues": {
           "type": "array",
-          "describtion": "Shape of the input features",
-          "minItems": 1,
-          "uniqueItems": true,
           "items": {
             "type": "object",
             "properties": {
-              "dimensionAxis": {
-                "name": "string",
-                "type": "integer"
+              "itemName": {
+                "type": "string"
+              },
+              "itemType": {
+                "type": "string"
+              },
+              "itemDescription": {
+                "type": "string"
               }
+            },
+            "required": [
+              "itemName",
+              "itemType",
+              "itemDescription"
+            ]
+          },
+          "describtion": "output names",
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "shape": {
+        "type": "array",
+        "describtion": "Shape of the output",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "object",
+          "properties": {
+            "dimensionAxis": {
+              "name": "string",
+              "type": "integer"
             }
           }
+        }
+      },
+      "maxProperties": 1
+    }
+  },
+  "modelType": {
+    "oneOf": [
+      {
+        "type": "string"
+      },
+      {
+        "enum": [
+          "pickle",
+          "onnx"
+        ]
+      }
+    ],
+    "description": "Model type (pickle | onnx)"
+  },
+  "inputFeatures": {
+    "type": "object",
+    "description": "Array of Input Features for the ML-Model",
+    "properties": {
+      "features": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "itemName": {
+              "type": "string"
+            },
+            "itemType": {
+              "type": "string"
+            },
+            "itemDescription": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "itemName",
+            "itemType",
+            "itemDescription"
+          ]
         },
-        "maxProperties":1
+        "describtion": "Input feature names",
+        "minItems": 1,
+        "uniqueItems": true
       }
     },
-    "required": [
-      "modelName",
-      "outputs",
-      "modelType",
-      "inputFeatures"
-    ]
-  }
+    "shape": {
+      "type": "array",
+      "describtion": "Shape of the input features",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "properties": {
+          "dimensionAxis": {
+            "name": "string",
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "maxProperties": 1
+  },
+  "required": [
+    "modelName",
+    "outputs",
+    "modelType",
+    "inputFeatures"
+  ]
+}
