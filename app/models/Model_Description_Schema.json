@@ -13,10 +13,38 @@
       "description": "Description of the model"
     },
     "outputs": {
+      "$ref": "#/$defs/data"
+    }
+  },
+  "modelType": {
+    "oneOf": [
+      {
+        "type": "string"
+      },
+      {
+        "enum": [
+          "pickle",
+          "onnx"
+        ]
+      }
+    ],
+    "description": "Model type (pickle | onnx)"
+  },
+  "inputFeatures": {
+    "$ref": "#/$defs/data"
+  },
+  "required": [
+    "modelName",
+    "outputs",
+    "modelType",
+    "inputFeatures"
+  ],
+  "$defs": {
+    "data": {
       "type": "object",
-      "description": "Array of output values of the ML-Model",
+      "description": "Array of Input Features for the ML-Model",
       "properties": {
-        "outputValues": {
+        "features": {
           "type": "array",
           "items": {
             "type": "object",
@@ -37,14 +65,14 @@
               "itemDescription"
             ]
           },
-          "describtion": "output names",
+          "describtion": "Input feature names",
           "minItems": 1,
           "uniqueItems": true
         }
       },
       "shape": {
         "type": "array",
-        "describtion": "Shape of the output",
+        "describtion": "Shape of the input features",
         "minItems": 1,
         "uniqueItems": true,
         "items": {
@@ -59,72 +87,5 @@
       },
       "maxProperties": 1
     }
-  },
-  "modelType": {
-    "oneOf": [
-      {
-        "type": "string"
-      },
-      {
-        "enum": [
-          "pickle",
-          "onnx"
-        ]
-      }
-    ],
-    "description": "Model type (pickle | onnx)"
-  },
-  "inputFeatures": {
-    "type": "object",
-    "description": "Array of Input Features for the ML-Model",
-    "properties": {
-      "features": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "itemName": {
-              "type": "string"
-            },
-            "itemType": {
-              "type": "string"
-            },
-            "itemDescription": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "itemName",
-            "itemType",
-            "itemDescription"
-          ]
-        },
-        "describtion": "Input feature names",
-        "minItems": 1,
-        "uniqueItems": true
-      }
-    },
-    "shape": {
-      "type": "array",
-      "describtion": "Shape of the input features",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": {
-        "type": "object",
-        "properties": {
-          "dimensionAxis": {
-            "name": "string",
-            "type": "integer"
-          }
-        }
-      }
-    },
-    "maxProperties": 1
-  },
-  "required": [
-    "modelName",
-    "outputs",
-    "modelType",
-    "inputFeatures"
-  ]
+  }
 }
