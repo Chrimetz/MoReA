@@ -22,10 +22,7 @@
             "type": "string"
           },
           {
-            "enum": [
-              "pickle",
-              "onnx"
-            ]
+            "enum": ["pickle", "onnx"]
           }
         ],
         "description": "Model type (pickle | onnx)"
@@ -49,43 +46,28 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "itemName",
-                "itemType",
-                "itemDescription"
-              ]
+              "required": ["itemName", "itemType", "itemDescription"]
             },
             "describtion": "Input feature names",
             "minItems": 1,
             "uniqueItems": true
           },
           "shape": {
-            "type": "object",
+            "type": "array",
             "describtion": "Shape of the input features",
-            "properties": {
-              "length": {
-                "type": "integer"
-              },
-              "width": {
-                "type": "integer"
-              },
-              "height": {
-                "type": "integer"
-              }
-            },
-            "required": [
-              "length",
-              "width",
-              "height"
-            ]
+            "minItems":1,
+            "items":{
+                "type":"object",
+                "properties": {
+                "dimensionAxis": {
+                    "name":"string",
+                    "type": "integer"
+                }
+            }
+            }         
           }
         }
       }
     },
-    "required": [
-      "modelName",
-      "outputs",
-      "modelType",
-      "inputFeatures"
-    ]
+    "required": ["modelName", "outputs", "modelType", "inputFeatures"]
   }
