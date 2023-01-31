@@ -1,0 +1,19 @@
+{
+    "modelName": "test1",
+    "outputs": "test",
+    "modelType": "1",
+    "inputFeatures": {
+      "Features": [
+        {
+          "itemName":"Feature1",
+          "itemType": "string",
+          "itemDescription": "ErsterEingabeParameter"
+        }
+      ],
+      "shape": [
+        {"name":"X","type":1},
+        {"name":"Y","type":1},
+        {"name":"Z","type":1}
+      ]
+    }
+  }
