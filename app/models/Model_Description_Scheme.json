@@ -4,59 +4,88 @@
     "title": "Model",
     "type": "object",
     "properties": {
-        "modelName": {
-            "type": "string",
-            "description": "Name of the model" 
-        },
-        "details":{
-            "type": "string",
-            "description": "Description of the model" 
-        },
-        "outputs":{ 
-            "type": "string",    
-            "description": "Description Output of the model"
-        },
-        "modelType":{ 
-            "oneOf":[
-                {"type": "string"},
-                {"enum":["pickle", "onnx"]}
-            ],
-            "description": "Model type (pickle | onnx)"            
-        },
-        "inputFeatures":{
-            "type":"object",
-            "description":"Array of Input Features for the ML-Model",
-            "minItems": 1,
-            "uniqueItems": true,
-            "properties":{
-                "name":{
-                    "type":"array",
-                    "describtion":"Input feature names",
-                    "minItems":1,
-                    "uniqueItems":true
+      "modelName": {
+        "type": "string",
+        "description": "Name of the model"
+      },
+      "details": {
+        "type": "string",
+        "description": "Description of the model"
+      },
+      "outputs": {
+        "type": "string",
+        "description": "Description Output of the model"
+      },
+      "modelType": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "enum": [
+              "pickle",
+              "onnx"
+            ]
+          }
+        ],
+        "description": "Model type (pickle | onnx)"
+      },
+      "inputFeatures": {
+        "type": "object",
+        "description": "Array of Input Features for the ML-Model",
+        "properties": {
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "itemName": {
+                  "type": "string"
                 },
-                "shape":{
-                    "type":"object",
-                    "describtion":"Shape of the input features",
-                    "properties":{
-                        "length":{
-                            "type":"integer"
-                        },
-                        "width":{
-                            "type":"integer"
-                        },
-                        "height":{
-                            "type":"integer"
-                        }
-                    },
-                    "required":["length", "width", "height"]
+                "itemType": {
+                  "type": "string"
                 },
-                "itemsType":{
-                    "type":"string",
-                    "describtion":"Input feature type"
+                "itemDescription": {
+                  "type": "string"
                 }
-            }
+              },
+              "required": [
+                "itemName",
+                "itemType",
+                "itemDescription"
+              ]
+            },
+            "describtion": "Input feature names",
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "shape": {
+            "type": "object",
+            "describtion": "Shape of the input features",
+            "properties": {
+              "length": {
+                "type": "integer"
+              },
+              "width": {
+                "type": "integer"
+              },
+              "height": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "length",
+              "width",
+              "height"
+            ]
+          }
         }
+      }
     },
-    "required": ["modelName", "outputs", "modelType", "inputFeatures"]    
-}
+    "required": [
+      "modelName",
+      "outputs",
+      "modelType",
+      "inputFeatures"
+    ]
+  }
