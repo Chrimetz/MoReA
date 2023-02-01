@@ -49,30 +49,30 @@
           "items": {
             "type": "object",
             "properties": {
-              "itemName": {
+              "name": {
                 "type": "string"
               },
-              "itemType": {
+              "kind": {
                 "type": "string"
               },
-              "itemDescription": {
+              "description": {
                 "type": "string"
               }
             },
             "required": [
-              "itemName",
-              "itemType",
-              "itemDescription"
+              "name",
+              "kind",
+              "description"
             ]
           },
-          "describtion": "Input feature names",
+          "describtion": "Input or output names",
           "minItems": 1,
           "uniqueItems": true
         }
       },
       "shape": {
         "type": "array",
-        "describtion": "Shape of the input features",
+        "describtion": "Shape of the input or outputs",
         "minItems": 1,
         "uniqueItems": true,
         "items": {
@@ -80,8 +80,14 @@
           "properties": {
             "dimensionAxis": {
               "name": "string",
-              "type": "integer"
-            }
+              "value": "integer",
+              "kind": "string"
+            },
+            "reqiured": [
+              "name",
+              "value",
+              "kind"
+            ]
           }
         }
       },
