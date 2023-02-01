@@ -1,0 +1,17 @@
+{
+    "modelName": "MNIST",
+      "detail":"Predictive Model for recognizing handwritten digits, based on the MNIST dataset.",
+    "outputs": {
+        "outputValues":[{"itemName":"1", "itemType":"string","itemDescription":"1"}]
+    },
+    "modelType": 1,
+    "inputFeatures": {
+      "shape": [
+        {"name":"X","value":1,"type":"float32"},
+        {"name":"Y","value":28,"kind":"float32"},
+        {"name":"Z","value":28,"kind":"float32"},
+        {"name":"Y","value":1,"kind":"float32"}
+      ]
+    }
+  }
+  
