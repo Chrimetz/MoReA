@@ -30,7 +30,7 @@
     ],
     "description": "Model type (pickle | onnx)"
   },
-  "inputFeatures": {
+  "inputs": {
     "$ref": "#/$defs/data"
   },
   "required": [
@@ -45,10 +45,13 @@
       "description": "Array of Input Features for the ML-Model",
       "properties": {
         "features": {
-          "type": "array",
+          "type": "array",          
           "items": {
             "type": "object",
             "properties": {
+              "shape": {
+                "$ref": "#/$defs/shape"
+              },
               "name": {
                 "type": "string"
               },
@@ -62,36 +65,57 @@
             "required": [
               "name",
               "kind",
-              "description"
+              "description",
+              "shape"
             ]
           },
           "describtion": "Input or output names",
           "minItems": 1,
           "uniqueItems": true
-        }
-      },
-      "shape": {
-        "type": "array",
-        "describtion": "Shape of the input or outputs",
-        "minItems": 1,
-        "uniqueItems": true,
-        "items": {
-          "type": "object",
-          "properties": {
-            "dimensionAxis": {
-              "name": "string",
-              "value": "integer",
-              "kind": "string"
-            },
-            "reqiured": [
-              "name",
-              "value",
-              "kind"
+        },          
+      }
+    },
+    "shape": {
+      "description": "input image",
+      "content": {
+        "type": "object",
+        "description": "batch-dimension",
+        "properties": {
+          "size": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "content": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/shape"
+              },
+              {
+                "$ref": "#/$defs/item"
+              }
             ]
           }
         }
       },
-      "maxProperties": 1
+      "item": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "Description"
+        ],
+        "minItems": 2,
+        "uniqueItems": true
+      }
     }
   }
 }

@@ -25,7 +25,7 @@ from os import path
 import os
 import numpy as np
 import logging
-
+import uvicorn
 import sys
 
 from pydantic import BaseModel
@@ -166,3 +166,11 @@ def request_model(model_name: str, input: ModelInput):
 		return prediction
 	except Exception as e:
 		raise HTTPException(status_code=400, detail="Prediction failed: " + str(e))
+
+
+if __name__ == "__main__":
+	print("Starting MoReA")
+	uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+	else:
+		print("MoReA is already running")
+		sys.exit(1)
