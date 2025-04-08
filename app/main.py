@@ -27,6 +27,7 @@ import numpy as np
 import logging
 import uvicorn
 import sys
+import argparse
 
 from pydantic import BaseModel
 
@@ -170,7 +171,13 @@ def request_model(model_name: str, input: ModelInput):
 
 if __name__ == "__main__":
 	print("Starting MoReA")
-	uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
-	else:
-		print("MoReA is already running")
-		sys.exit(1)
+	
+	parser = argparse.ArgumentParser(description="MoReA API")
+	parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run the API on")
+	parser.add_argument("--port", type=int, default=8000, help="Port to run the API on")
+	parser.add_argument("--log-level", type=str, default="info", help="Log level to use")
+	args = parser.parse_args()
+
+	print(f"Starting MoReA API on {args.host}:{args.port} with log level {args.log_level}")
+	# Start the API with the given arguments
+	uvicorn.run(app, host=args.host, port=args.port, log_level=args.log_level)
