@@ -1,6 +1,6 @@
 import requests
 
-API_URL = "http://moreapi.dsc.uni-bremen.de"
+API_URL = "http://127.0.0.1"
 API_PORT = 8000
 API_ROOT_PATH = "models"
 

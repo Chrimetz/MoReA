@@ -16,19 +16,16 @@ Functions:
 
 """
 
-from typing import Union, Dict, Optional
+from typing import Union, Dict
 from fastapi import FastAPI, Request, HTTPException
 from .ml_models import MLModelFactory, IMLModel
-import json
 from os import walk
 from os import path
 import os
 import numpy as np
 import logging
 import uvicorn
-import sys
 import argparse
-
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -36,11 +33,32 @@ app = FastAPI()
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-models = MLModelFactory().load_from_directory(os.path.join(dir_path, "models"), logger)
+
+models = None
 
 class ModelInput(BaseModel):
     features: Dict[str, Union[str, list, float, int]]
+
+def main():
+	print("Starting MoReA")
+    
+	parser = argparse.ArgumentParser(description="MoReA API")
+	parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run the API on")
+	parser.add_argument("--port", type=int, default=8000, help="Port to run the API on")
+	parser.add_argument("--log-level", type=str, default="info", help="Log level to use")
+	parser.add_argument("--models-dir", type=str, help="Directory to load models from")
+	args = parser.parse_args()
+
+	if args.models_dir:
+		if not path.exists(args.models_dir):
+			raise ValueError("Models directory does not exist")
+		else:            
+			global models
+			models = MLModelFactory().load_from_directory(args.models_dir, logger)
+
+	print(f"Starting MoReA API on {args.host}:{args.port} with log level {args.log_level}")
+	# Explicitly reference the app instance
+	uvicorn.run("app.main:app", host=args.host, port=args.port, log_level=args.log_level)
 
 @app.get("/models/")
 def get_all_models(request: Request):
@@ -168,16 +186,3 @@ def request_model(model_name: str, input: ModelInput):
 	except Exception as e:
 		raise HTTPException(status_code=400, detail="Prediction failed: " + str(e))
 
-
-if __name__ == "__main__":
-	print("Starting MoReA")
-	
-	parser = argparse.ArgumentParser(description="MoReA API")
-	parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run the API on")
-	parser.add_argument("--port", type=int, default=8000, help="Port to run the API on")
-	parser.add_argument("--log-level", type=str, default="info", help="Log level to use")
-	args = parser.parse_args()
-
-	print(f"Starting MoReA API on {args.host}:{args.port} with log level {args.log_level}")
-	# Start the API with the given arguments
-	uvicorn.run(app, host=args.host, port=args.port, log_level=args.log_level)

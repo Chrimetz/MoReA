@@ -1,23 +1,25 @@
 from setuptools import setup, find_packages
 
+
+
 setup(
-    name="MoReA",
+    name="morea",
     version="0.1.0",
-    packages=find_packages(include=["MoReA", "MoReA.*"]),
+    packages=find_packages(),
     install_requires=[
         "uvicorn",
         "numpy",
         "fastapi",
-        "onnxruntime"
+        "onnxruntime==1.21.0",
         "pydantic",
         "coremltools",
-        "scikit-learn==1.1.0",
+        "scikit-learn",
         "requests"
     ],
     author="Christopher A. Metz",
     entry_points={
         "console_scripts": [
-            "MoReA = app.main:main"
+            "morea = app.main:main"
         ]
     },
 )

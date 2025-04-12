@@ -1,46 +1,68 @@
-# Model Request API for EvoAI connection
+# MoReA - Model Request API: Deploy Machine Learning Models fast
 
-In this project, a RESTFull API is developed to connect to the EvoAl framework. This project is currently work-in-progress state.
+<div align="center">
+  <img src="./morealogo.png" alt="MoReA Logo" width="25%">
+</div>
 
-Additional ML-based Models can easily extend the API by adding the Models to the directory Models/ and a Model-Description file. This simple JSON template gives the API all the necessary details of your model. The models are automatically discovered and are available with their URLs. 
+In this project, a RESTful API is developed to deploy machine learning models quick and in a no-code environment for experimental and simple production environments. This project is currently in a work-in-progress state.
 
-As mentioned, the project is in a work-in-progress state; thus, only sklearn models saved with pickels and .onnx models are supported currently. The model and the description file must have identical names, except for the ending. 
+Additional ML-based models can easily extend the API by adding the models to the directory `Models/` and a model-description file. This simple JSON template gives the API all the necessary details of your model. The models are automatically discovered and are available with their URLs.
 
-## Public running api:
+As mentioned, the project is in a work-in-progress state; thus, only sklearn models saved with pickles and `.onnx` models are supported currently. The model and the description file must have identical names, except for the file extension.
 
-http://moreapi.dsc.uni-bremen.de:8000
+---
 
-## Starting the API:
-### Console 
-Run the following command from the root path of this repository:
+## Installation
 
-uvicorn app.main:app --reload
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/morea.git
+   cd morea
+   ```
+2. Install MoReA:
+   ```bash
+   pip install .
+   ```
 
-A list of required python packages can be found in "requirements.txt".
+---
 
-### Docker
-A docker file is available.
+## Starting the API
 
-Build: docker build --tag moreapi-docker .\
-Run: docker run --publish 8000:8000 moreapi-docker
+### From Command Line
+After installation, you can start the application directly from the command line using the `MoReA` command:
 
-#### Custom model dir
-A few basic models are currently copied into the docker image.
-If you want to use your own models after the docker image is built, you can mount a volume:\
-\
-docker run --publish 8000:8000 --volume /path/to/own/models/directory:/app/app/models moreapi-docker
+```bash
+morea --host 127.0.0.1 --port 8000 --log-level debug --models-dir ./models
+```
 
+### Available Parameters
+- `--host`: Specify the host address to bind the server to (default: `0.0.0.0`).
+- `--port`: Specify the port number to bind the server to (default: `8000`).
+- `--log-level`: Set the log level for the server. Available options are:
+  - `critical`
+  - `error`
+  - `warning`
+  - `info` (default)
+  - `debug`
+- `--models-dir`: Specify the directory where all models and model descriptions are located. This parameter must be specified at start and does not have a default value.
+
+For example, to run the server on a custom host and port with debug logging:
+```bash
+morea --host 192.168.1.100 --port 8080 --log-level debug
+```
+
+---
 ## API Endpoints
 
 ### All Models
 
-The first endpoint provides a list of all available ML-based models along with its description and an individual URL to access each model
+The first endpoint provides a list of all available ML-based models along with its description and an individual URL to access each model.
 
-#### GET: localhost:8000/models
+#### GET: `localhost:8000/models`
 
-##### Example result:
-
-`[
+##### Example Result:
+```json
+[
   {
     "name": "MNIST",
     "endpoint": "http://localhost:8000/models/Mnist",
@@ -51,19 +73,20 @@ The first endpoint provides a list of all available ML-based models along with i
     "endpoint": "http://localhost:8000/models/XgBoostRegressor",
     "description": "Predictive Model for power estimation of CNNs on GPGPUs"
   }
-]`
+]
+```
 
-### Model details
+### Model Details
 
-Each model provides an individual endpoint for the details of the model including the possible parameters.
+Each model provides an individual endpoint for the details of the model, including the possible parameters.
 
 #### Example:
 
-##### GET: http://localhost:8000/models/Mnist
+##### GET: `http://localhost:8000/models/Mnist`
 
 ##### Result:
-
-`{
+```json
+{
   "name": "MNIST",
   "details": "Predictive Model for recognizing handwritten digits, based on the MNIST dataset.",
   "outputs": "Probability-distribution of 10-classes for the digits 0-9.",
@@ -80,23 +103,28 @@ Each model provides an individual endpoint for the details of the model includin
       "type": "float32"
     }
   ]
-}`
+}
+```
 
-
-### Model inferencing
+### Model Inferencing
 
 Each model provides an endpoint for inferencing. The input data is sent via a POST request.
 
 #### Example 1:
 
-##### POST: http://localhost:8000/models/Mnist
+##### POST: `http://localhost:8000/models/Mnist`
 ###### Body:
-
-`{"features":{"image":[[[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.14117648],[0.21960784],[0.5372549],[0.7882353],[0.78039217],[0.37254903],[0.14509805],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.1764706],[0.59607846],[0.91764706],[0.99607843],[0.99607843],[0.99607843],[0.99607843],[0.99607843],[0.98039216],[0.827451],[0.5921569],[0.02352941],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.18039216],[0.6],[0.9411765],[0.99607843],[0.99607843],[0.8901961],[0.6509804],[0.52156866],[0.9843137],[0.78431374],[0.99607843],[0.8980392],[0.88235295],[0.40784314],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0.6],[0.91764706],[0.99607843],[0.99607843],[0.73333335],[0.5568628],[0.03137255],[0],[0],[0.7490196],[0.15686275],[0.7764706],[0.9647059],[0.8745098],[0.99215686],[0.08235294],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0.03137255],[0.49411765],[0.99215686],[0.99607843],[0.9137255],[0.5019608],[0.04313726],[0],[0],[0],[0],[0.8235294],[0.16862746],[0.27450982],[0.99607843],[0.99607843],[0.99607843],[0.08235294],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0.28235295],[0.9529412],[0.99607843],[0.89411765],[0.21176471],[0],[0],[0],[0],[0.01176471],[0.1254902],[0.45490196],[0.88235295],[0.9490196],[0.99607843],[1],[0.63529414],[0.01960784],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0.29411766],[0.9411765],[0.99607843],[0.8745098],[0.42745098],[0.5411765],[0.69803923],[0.69803923],[0.6627451],[0.8235294],[0.9843137],[0.90588236],[0.99607843],[0.99607843],[0.99607843],[0.9098039],[0.14901961],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0.03529412],[0.6862745],[0.95686275],[0.99215686],[1],[0.99607843],[0.99607843],[0.9843137],[0.99607843],[0.99607843],[0.99607843],[0.99607843],[0.99607843],[0.9882353],[0.67058825],[0.09803922],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0.0627451],[0.53333336],[0.7647059],[0.6901961],[0.57254905],[0.6],[0.78431374],[0.99607843],[0.99607843],[0.99607843],[0.99607843],[0.5882353],[0.0627451],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.63529414],[0.99607843],[0.99607843],[0.94509804],[0.3882353],[0.01176471],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.4627451],[0.98039216],[0.99607843],[0.99607843],[0.3529412],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.39215687],[0.9490196],[0.99607843],[0.99607843],[0.827451],[0.02745098],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.21176471],[0.94509804],[0.99607843],[0.99607843],[0.9490196],[0.23137255],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.5137255],[0.99607843],[0.99607843],[0.95686275],[0.2509804],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.05098039],[0.9764706],[0.99607843],[0.99607843],[0.59607846],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.04705882],[0.89411765],[0.99607843],[0.99607843],[0.8156863],[0.03137255],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.30588236],[1],[0.99607843],[0.99607843],[0.25882354],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.81960785],[0.99607843],[0.99607843],[0.5372549],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.8901961],[1],[0.9137255],[0.09803922],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0.44313726],[1],[0.42352942],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]],[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]]]]}}`
+```json
+{
+  "features": {
+    "image": [[[...]]]  // Example input data
+  }
+}
+```
 
 ##### Result:
-
-`{
+```json
+{
   "result": {
     "dense": [
       [
@@ -113,18 +141,24 @@ Each model provides an endpoint for inferencing. The input data is sent via a PO
       ]
     ]
   }
-}`
+}
+```
 
-#### Example 2
+#### Example 2:
 
-##### POST: http://localhost:8000/models/BostonHousePrices
+##### POST: `http://localhost:8000/models/BostonHousePrices`
 ###### Body:
-
-`{"features":{"input_1":[[-0.39592582,0.85374287,-1.30031899,-0.29541676,-0.68858289,0.82781921,0.07100048,-0.31650001,-0.30917602,-1.08348329,0.42300873,-0.71757293]]}}`
+```json
+{
+  "features": {
+    "input_1": [[-0.39592582, 0.85374287, -1.30031899, -0.29541676, -0.68858289, 0.82781921, 0.07100048, -0.31650001, -0.30917602, -1.08348329, 0.42300873, -0.71757293]]
+  }
+}
+```
 
 ##### Result:
-
-`{
+```json
+{
   "result": {
     "price_output": [
       [
@@ -137,4 +171,5 @@ Each model provides an endpoint for inferencing. The input data is sent via a PO
       ]
     ]
   }
-}`
+}
+```
