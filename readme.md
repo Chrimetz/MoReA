@@ -6,7 +6,7 @@
 
 In this project, a RESTful API is developed to deploy machine learning models quick and in a no-code environment for experimental and simple production environments. This project is currently in a work-in-progress state.
 
-Additional ML-based models can easily extend the API by adding the models to the directory `Models/` and a model-description file. This simple JSON template gives the API all the necessary details of your model. The models are automatically discovered and are available with their URLs.
+Additional ML-based models can easily extend the API by adding the models to the directory that is specified as parameter during startup of the application. However, currently a model-description file is required. This simple JSON template gives the API all the necessary details of your model. The models are automatically discovered and are available with their URLs.
 
 As mentioned, the project is in a work-in-progress state; thus, only sklearn models saved with pickles and `.onnx` models are supported currently. The model and the description file must have identical names, except for the file extension.
 
